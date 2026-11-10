@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+*.class
+
+backend/complaints.txt
+
+# Local complaint data
+complaints.txt
+backend/complaints.txt
+
+# Java generated files
+*.class
+backend/target/
+
+# React generated files
+node_modules/
+dist/
+
+# Environment files
+.env

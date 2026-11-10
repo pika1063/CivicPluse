@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicPulse | Campus Helpdesk</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Segoe UI,Arial,sans-serif;background:#f5f7fb;color:#202b3c}
+.app{display:flex;min-height:100vh}
+.sidebar{width:235px;background:#172b4d;color:white;padding:28px 18px}
+.logo{font-size:25px;font-weight:750;margin-bottom:8px}
+.logo span{color:#66b4ff}
+.tagline{font-size:12px;color:#aabbd2;margin-bottom:40px}
+.nav-title{font-size:11px;color:#8da3c1;margin:22px 12px 10px}
+.nav button{display:block;width:100%;border:0;background:transparent;color:#c9d6e8;text-align:left;padding:13px;border-radius:9px;margin:5px 0;cursor:pointer;font-size:14px}
+.nav button.active,.nav button:hover{background:#29466e;color:white}
+.sidebar-bottom{margin-top:70px;color:#aabbd2;font-size:12px;padding:12px}
+.main{flex:1;padding:30px 38px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.topbar h1{font-size:25px}
+.topbar p{color:#8491a3;font-size:13px;margin-top:5px}
+.profile{background:white;border:1px solid #e7ebf1;border-radius:30px;padding:10px 16px;font-size:13px}
+.welcome{background:linear-gradient(110deg,#2458a6,#4389dc);color:white;border-radius:16px;padding:26px 30px;margin-bottom:25px}
+.welcome h2{font-size:23px;margin-bottom:8px}
+.welcome p{font-size:14px;color:#e3efff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:17px;margin-bottom:27px}
+.stat{background:white;padding:20px;border:1px solid #e9edf3;border-radius:13px}
+.stat p{font-size:13px;color:#8491a3}
+.stat h2{font-size:28px;margin-top:12px}
+.stat small{color:#8290a4}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 15px}
+.section-head h2{font-size:18px}
+.primary{background:#2868bd;color:white;border:0;border-radius:8px;padding:11px 17px;cursor:pointer;font-weight:600}
+.primary:hover{background:#194f98}
+.panel{background:white;border:1px solid #e8edf3;border-radius:13px;padding:22px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:#8491a3;font-weight:600;padding:13px 9px;border-bottom:1px solid #edf0f4}
+td{padding:16px 9px;border-bottom:1px solid #f0f2f5}
+.status{padding:6px 10px;border-radius:20px;font-size:11px;font-weight:650}
+.pending{background:#fff3d9;color:#a56a00}
+.progress{background:#e4efff;color:#2863ad}
+.resolved{background:#e1f6e9;color:#168044}
+.page{display:none}.page.active{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #dce2ea;border-radius:8px;font:14px inherit;outline:none}
+.field textarea{height:110px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#4389dc}
+.full{grid-column:1/-1}
+.empty{color:#8996a8;padding:25px;text-align:center}
+#toast{position:fixed;bottom:25px;right:25px;background:#172b4d;color:white;padding:14px 20px;border-radius:9px;display:none}
+@media(max-width:850px){.sidebar{width:180px}.main{padding:22px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.sidebar{width:65px;padding:20px 7px}.logo{font-size:15px}.tagline,.nav-title,.nav button span,.sidebar-bottom{display:none}.nav button{text-align:center;font-size:19px;padding:12px 3px}.main{padding:15px}.stats{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.panel{overflow-x:auto}.topbar h1{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">Civic<span>Pulse</span></div>
+  <div class="tagline">CAMPUS HELP DESK</div>
+  <div class="nav-title">MENU</div>
+  <div class="nav">
+    <button class="active" onclick="showPage('dashboard',this)">▦ &nbsp; <span>Dashboard</span></button>
+    <button onclick="showPage('submit',this)">＋ &nbsp; <span>Submit Complaint</span></button>
+    <button onclick="showPage('complaints',this)">▤ &nbsp; <span>My Complaints</span></button>
+    <button onclick="showPage('admin',this)">⚙ &nbsp; <span>Admin Panel</span></button>
+  </div>
+  <div class="sidebar-bottom">Making campus better, together.</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><h1 id="pageTitle">Dashboard</h1><p>Campus issue reporting and resolution</p></div>
+  <div class="profile">👤 Student Account</div>
+</header>
+
+<section id="dashboard" class="page active">
+  <div class="welcome">
+    <h2>Welcome to CivicPulse 👋</h2>
+    <p>Have an issue on campus? Report it here and track its resolution.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><p>Total Complaints</p><h2 id="total">0</h2><small>All submitted issues</small></div>
+    <div class="stat"><p>Pending</p><h2 id="pending">0</h2><small>Awaiting action</small></div>
+    <div class="stat"><p>In Progress</p><h2 id="progressCount">0</h2><small>Being addressed</small></div>
+    <div class="stat"><p>Resolved</p><h2 id="resolved">0</h2><small>Successfully closed</small></div>
+  </div>
+  <div class="section-head">
+    <h2>Recent Complaints</h2>
+    <button class="primary" onclick="showPage('submit')">+ New Complaint</button>
+  </div>
+  <div class="panel"><div id="recent"></div></div>
+</section>
+
+<section id="submit" class="page">
+  <div class="section-head"><h2>Report a Campus Issue</h2></div>
+  <div class="panel">
+    <form id="complaintForm">
+      <div class="form-grid">
+        <div class="field">
+          <label>Student Name</label>
+          <input id="student" placeholder="Enter your name" required>
+        </div>
+        <div class="field">
+          <label>Issue Category</label>
+          <select id="category" required>
+            <option value="">Select category</option>
+            <option>Electricity</option><option>Water</option>
+            <option>Cleanliness</option><option>Classroom</option>
+            <option>Wi-Fi</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Complaint Title</label>
+          <input id="title" placeholder="Briefly describe the issue" required>
+        </div>
+        <div class="field full">
+          <label>Detailed Description</label>
+          <textarea id="description" placeholder="Explain the problem and its location..." required></textarea>
+        </div>
+      </div>
+      <button class="primary" type="submit">Submit Complaint →</button>
+    </form>
+  </div>
+</section>
+
+<section id="complaints" class="page">
+  <div class="section-head"><h2>My Complaints</h2></div>
+  <div class="panel" id="allComplaints"></div>
+</section>
+
+<section id="admin" class="page">
+  <div class="section-head"><h2>Admin Complaint Management</h2></div>
+  <div class="panel" id="adminComplaints"></div>
+</section>
+</main>
+</div>
+<div id="toast"></div>
+
+<script>
+let complaints = JSON.parse(localStorage.getItem("civicComplaints") || "[]");
+
+function save(){
+  localStorage.setItem("civicComplaints",JSON.stringify(complaints));
+}
+
+function showPage(id,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.getElementById("pageTitle").textContent =
+    id==="submit"?"Submit Complaint":id==="complaints"?"My Complaints":id==="admin"?"Admin Panel":"Dashboard";
+  if(button){
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+    button.classList.add("active");
+  }
+  render();
+}
+
+function notify(message){
+  let t=document.getElementById("toast");
+  t.textContent=message;t.style.display="block";
+  setTimeout(()=>t.style.display="none",2500);
+}
+
+function badge(status){
+  let cls=status==="Pending"?"pending":status==="Resolved"?"resolved":"progress";
+  return `<span class="status ${cls}">${status}</span>`;
+}
+
+function tableHTML(items,admin=false){
+  if(!items.length)return '<div class="empty">No complaints found. Submit your first complaint!</div>';
+  return `<table><thead><tr><th>ID</th><th>Student</th><th>Category</th><th>Title</th><th>Status</th>${admin?'<th>Update</th>':''}</tr></thead><tbody>
+  ${items.map(c=>`<tr><td>#${c.id}</td><td>${escapeHTML(c.student)}</td><td>${escapeHTML(c.category)}</td><td>${escapeHTML(c.title)}</td><td>${badge(c.status)}</td>
+  ${admin?`<td><select onchange="updateStatus(${c.id},this.value)"><option ${c.status==="Pending"?"selected":""}>Pending</option><option ${c.status==="In Progress"?"selected":""}>In Progress</option><option ${c.status==="Resolved"?"selected":""}>Resolved</option></select></td>`:""}</tr>`).join("")}
+  </tbody></table>`;
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+
+function updateStatus(id,status){
+  let c=complaints.find(x=>x.id===id);
+  if(c){c.status=status;save();render();notify("Complaint status updated!");}
+}
+
+function render(){
+  document.getElementById("total").textContent=complaints.length;
+  document.getElementById("pending").textContent=complaints.filter(c=>c.status==="Pending").length;
+  document.getElementById("progressCount").textContent=complaints.filter(c=>c.status==="In Progress").length;
+  document.getElementById("resolved").textContent=complaints.filter(c=>c.status==="Resolved").length;
+  document.getElementById("recent").innerHTML=tableHTML(complaints.slice(-5).reverse());
+  document.getElementById("allComplaints").innerHTML=tableHTML([...complaints].reverse());
+  document.getElementById("adminComplaints").innerHTML=tableHTML([...complaints].reverse(),true);
+}
+
+document.getElementById("complaintForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  let c={
+    id:complaints.length?Math.max(...complaints.map(x=>x.id))+1:1,
+    student:document.getElementById("student").value.trim(),
+    category:document.getElementById("category").value,
+    title:document.getElementById("title").value.trim(),
+    description:document.getElementById("description").value.trim(),
+    status:"Pending"
+  };
+  complaints.push(c);save();this.reset();render();
+  notify("Your complaint has been submitted!");
+  showPage("complaints");
+});
+
+render();
+</script>
+</body>
+</html>
