@@ -72,8 +72,18 @@ h1 { font-size: 27px; margin: 9px 0 6px; }
 .orange { background: #fff3e5; color: #e69a39; }
 .blue { background: #e9f3ff; color: #478fdb; }
 .green { background: #e6f8ef; color: #36aa75; }
-.stat-card h2 { font-size: 27px; margin: 14px 0 3px; }
-.stat-card small { color: #a0a3b2; font-size: 11px; }
+
+.stat-card h2 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #20243a;
+  margin: 14px 0 3px;
+}
+.stat-card small {
+  color: #666b80;
+  font-size: 11px;
+  font-weight: 500;
+}
 
 .panel { background: white; border: 1px solid #ececf2; border-radius: 12px; padding: 24px; margin-bottom: 22px; }
 .panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 22px; }
